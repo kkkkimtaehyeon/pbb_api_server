@@ -1,0 +1,57 @@
+server:
+  port: 8080
+
+springdoc:
+  swagger-ui:
+    path: /docs
+
+spring:
+
+  servlet:
+    multipart:
+      enabled: true
+      max-file-size: 10MB
+      max-request-size: 10MB
+  jpa:
+    properties:
+      hibernate:
+        show_sql: false
+        format_sql: false
+        default_batch_fetch_size: ${jpa_default_batch_size}
+
+    hibernate:
+      ddl-auto: ${ddl_auto}
+    open-in-view: false # osiv 비활성화
+
+  datasource:
+    url: ${db_url}
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    username: ${db_username}
+    password: ${db_password}
+
+    hikari:
+      maximum-pool-size: ${max_pool_size}
+      minimum-idle: ${dbcp_min_idle}
+      connection-timeout: ${dbcp_connection_timeout}
+
+  data:
+    redis:
+      host: ${redis_host}
+      port: ${redis_port}
+      password: ${redis_password}
+
+aladin:
+  api:
+    ttbkey: ${aladin_ttbkey}
+
+tossSecretKey: ${tossSecretKey}
+
+jwt:
+  secret: ${jwt_secret}
+
+gcp:
+  gcs:
+    project_id: ${gcp_project_id}
+    bucket_name: ${gcs_bucket_name}
+    credentials:
+      location: ${gcs_credentials_location}
