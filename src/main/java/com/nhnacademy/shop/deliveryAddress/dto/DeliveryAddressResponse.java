@@ -1,7 +1,6 @@
 package com.nhnacademy.shop.deliveryAddress.dto;
 
 import com.nhnacademy.shop.deliveryAddress.entity.DeliveryAddress;
-import com.nhnacademy.shop.deliveryAddress.entity.MemberAddress;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

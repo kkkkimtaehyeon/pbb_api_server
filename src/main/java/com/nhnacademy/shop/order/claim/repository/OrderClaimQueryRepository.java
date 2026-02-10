@@ -16,7 +16,7 @@ import java.util.List;
 import static com.nhnacademy.shop.member.v2.entity.QMember.member;
 import static com.nhnacademy.shop.order.v2.entity.QOrderClaim.orderClaim;
 import static com.nhnacademy.shop.order.v2.entity.QOrderItem.orderItem;
-import static com.nhnacademy.shop.order.v2.entity.QOrders.orders;
+import static com.nhnacademy.shop.order.v2.entity.QOrder.order;
 import static com.nhnacademy.shop.payment.v2.entity.QPayment.payment;
 import static com.nhnacademy.shop.product.entity.QProduct.product;
 
@@ -29,7 +29,7 @@ public class OrderClaimQueryRepository {
         List<OrderClaimListResponse> orderClaims = queryFactory
                 .select(new QOrderClaimListResponse(
                         orderClaim,
-                        orders,
+                        order,
                         orderItem,
                         product,
                         payment,
@@ -38,9 +38,9 @@ public class OrderClaimQueryRepository {
                 .from(orderClaim)
                 .innerJoin(orderClaim.orderItem, orderItem)
                 .innerJoin(orderItem.product, product)
-                .innerJoin(orderItem.order, orders)
-                .innerJoin(payment).on(payment.order.eq(orders))
-                .innerJoin(orders.member, member)
+                .innerJoin(orderItem.order, order)
+                .innerJoin(payment).on(payment.order.eq(order))
+                .innerJoin(order.member, member)
                 .where(eqClaimType(claimType))
                 .limit(pageable.getPageSize())
                 .offset(pageable.getOffset())
@@ -52,9 +52,9 @@ public class OrderClaimQueryRepository {
                 .from(orderClaim)
                 .innerJoin(orderClaim.orderItem, orderItem)
                 .innerJoin(orderItem.product, product)
-                .innerJoin(orderItem.order, orders)
-                .innerJoin(payment).on(payment.order.eq(orders))
-                .innerJoin(orders.member, member)
+                .innerJoin(orderItem.order, order)
+                .innerJoin(payment).on(payment.order.eq(order))
+                .innerJoin(order.member, member)
                 .where(eqClaimType(claimType))
                 .fetchFirst();
         return new PageImpl<>(orderClaims, pageable, count);

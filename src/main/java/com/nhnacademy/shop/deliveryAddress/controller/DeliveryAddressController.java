@@ -16,7 +16,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 @RequiredArgsConstructor
-@RequestMapping("/api/delivery-address")
+@RequestMapping("/delivery-address")
 @RestController
 public class DeliveryAddressController {
 

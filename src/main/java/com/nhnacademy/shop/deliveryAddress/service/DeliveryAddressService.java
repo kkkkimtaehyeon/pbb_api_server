@@ -3,7 +3,6 @@ package com.nhnacademy.shop.deliveryAddress.service;
 import com.nhnacademy.shop.deliveryAddress.dto.DeliveryAddressRequest;
 import com.nhnacademy.shop.deliveryAddress.dto.DeliveryAddressResponse;
 import com.nhnacademy.shop.deliveryAddress.entity.DeliveryAddress;
-import com.nhnacademy.shop.deliveryAddress.entity.MemberAddress;
 import com.nhnacademy.shop.deliveryAddress.repository.DeliveryAddressRepository;
 import com.nhnacademy.shop.member.v2.entity.Member;
 import com.nhnacademy.shop.member.v2.repository.MemberRepository;

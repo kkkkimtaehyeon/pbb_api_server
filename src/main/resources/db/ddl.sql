@@ -1,189 +1,340 @@
-#
-주문
-create table orders
+create table attachment
 (
-    order_id           char(36)       not null,
-    number             char(26)       not null unique,
-    name               varchar(100)   not null,
-    ordered_at         datetime       not null default current_timestamp,
-    delivery_wish_date date           null,
-    used_point         int            null     default 0,
-    delivery_fee       decimal(10, 2) not null,
-    order_price        decimal(10, 2) not null,
-    status             tinyint        not null,
-    primary key (order_id)
-);
-alter table orders
-    modify column number char(26) not null unique;
-
-#
-    비회원 주문
-create table non_member_order
-(
-    non_member_order_id bigint       not null auto_increment,
-    nmo_order_id        char(36)     not null,
-    password            varchar(200) not null,
-    primary key (non_member_order_id),
-    foreign key (nmo_order_id) references orders (order_id) on delete restrict
+    id        bigint auto_increment
+        primary key,
+    file_type varchar(255) not null,
+    file_url  varchar(255) not null
 );
 
-#
-회원 주문
-create table member_order
+create table author
 (
-    member_order_id bigint   not null auto_increment,
-    mo_order_id     char(36) not null,
-    mo_member_id    bigint   not null,
-    primary key (member_order_id),
-    foreign key (mo_order_id) references orders (order_id),
-    foreign key (mo_member_id) references member (member_id) on delete restrict
+    deleted_at datetime(6)  null,
+    id         bigint auto_increment
+        primary key,
+    name       varchar(255) not null
 );
-# 주문 배송
+
+create table cart
+(
+    id bigint not null
+        primary key
+);
+
+create table category
+(
+    depth     int          not null,
+    id        bigint auto_increment
+        primary key,
+    parent_id bigint       null,
+    name      varchar(255) not null,
+    constraint FK2y94svpmqttx80mshyny85wqr
+        foreign key (parent_id) references category (id)
+);
+
+create table delivery
+(
+    id              bigint auto_increment
+        primary key,
+    address         varchar(255) not null,
+    address_detail  varchar(255) not null,
+    company         varchar(255) not null,
+    order_id        varchar(255) null,
+    phone_number    varchar(255) not null,
+    receiver        varchar(255) not null,
+    tracking_number varchar(255) not null,
+    zipcode         varchar(255) not null,
+    order_item_id   bigint       null,
+    constraint UK3bdrbd2jcybaaa5rxkj4s7vlk
+        unique (order_id)
+);
+
+create table member
+(
+    id           bigint auto_increment
+        primary key,
+    email        varchar(100)                                 not null,
+    name         varchar(100)                                 not null,
+    password     varchar(100)                                 not null,
+    member_grade enum ('BRONZE', 'DIAMOND', 'GOLD', 'SILVER') not null,
+    role         enum ('ROLE_ADMIN', 'ROLE_MEMBER')           not null,
+    constraint UKmbmcqelty0fbrvxp1q58dn57t
+        unique (email)
+);
+
+create table delivery_address
+(
+    id             bigint auto_increment
+        primary key,
+    address_detail varchar(500) not null,
+    address        varchar(255) not null,
+    phone_number   varchar(255) not null,
+    receiver       varchar(255) not null,
+    zipcode        varchar(255) not null,
+    is_default     bit          not null,
+    member_id      bigint       null,
+    constraint FK7txh3nxg2wpt4lmsgalnxpcm5
+        foreign key (member_id) references member (id)
+);
+
+create table member_address
+(
+    is_default          bit    not null,
+    delivery_address_id bigint null,
+    id                  bigint auto_increment
+        primary key,
+    member_id           bigint null,
+    constraint FK6ecy3echw4x1kqqvlwjjn2o2s
+        foreign key (delivery_address_id) references delivery_address (id),
+    constraint FKeslc8586cwl3ej73mv7gr83x2
+        foreign key (member_id) references member (id)
+);
+
 create table order_delivery
 (
-    order_delivery_id bigint      not null auto_increment,
-    od_order_id       char(36)    not null,
-    delivery_company  varchar(50) not null,
-    tracking_number   varchar(30) not null unique,
-    registered_at     datetime    not null default current_timestamp,
-    completed_at      datetime    null,
-    primary key (order_delivery_id),
-    foreign key (od_order_id) references orders (order_id) on delete cascade
+    id              bigint auto_increment
+        primary key,
+    company         varchar(255) not null,
+    tracking_number varchar(255) not null,
+    order_item_id   bigint       null,
+    constraint UK2y1cd14sy28825873jijan7mr
+        unique (order_item_id)
 );
 
-# 주문 배송지
-create table order_delivery_address
+create table orders
 (
-    order_delivery_address_id bigint       not null auto_increment,
-    oda_order_id              char(36)     not null,
-    zip_code                  varchar(20)  not null,
-    location_address          varchar(100) not null,
-    detail_address            varchar(100) not null,
-    recipient                 varchar(100) not null,
-    recipient_phone           varchar(15)  not null,
-    primary key (order_delivery_address_id),
-    foreign key (oda_order_id) references orders (order_id)
+    payment_amount decimal(38, 2) null,
+    used_point     int            null,
+    current_pi_id  bigint         null,
+    delivery_id    bigint         null,
+    member_id      bigint         null,
+    ordered_at     datetime(6)    not null,
+    address        varchar(255)   not null,
+    address_detail varchar(255)   not null,
+    id             varchar(255)   not null
+        primary key,
+    phone_number   varchar(255)   not null,
+    receiver       varchar(255)   not null,
+    zipcode        varchar(255)   not null,
+    constraint UK9ct0l8xfeaiqruabcqjh1neui
+        unique (delivery_id),
+    constraint UKikj9868q38ttf7fxq9oxw0hgs
+        unique (current_pi_id),
+    constraint FKpktxwhj3x9m4gth5ff6bkqgeb
+        foreign key (member_id) references member (id),
+    constraint FKtkrur7wg4d8ax0pwgo0vmy20c
+        foreign key (delivery_id) references delivery (id)
 );
 
+alter table delivery
+    add constraint FKu4e8rjwmg09vmas3ccjwglso
+        foreign key (order_id) references orders (id);
 
-#
-주문상품
-create table order_product
-(
-    order_product_id   bigint         not null auto_increment,
-    op_selling_book_id bigint         not null,
-    op_order_id        char(36)       not null,
-    price              decimal(10, 2) not null,
-    quantity           int            not null default 1 check ( quantity >= 1 ),
-    coupon_discount    decimal(10, 2) null check (coupon_discount >= 0),
-    status             tinyint        not null,
-    primary key (order_product_id),
-    foreign key (op_selling_book_id) references selling_book (selling_book_id) on delete restrict,
-    foreign key (op_order_id) references orders (order_id) on delete cascade
-);
-
-# 주문상품 포장
-create table order_product_wrapping
-(
-    order_product_wrapping_id bigint  not null auto_increment,
-    opw_order_product_id      bigint  not null,
-    opw_wrapping_paper_id     bigint  not null,
-    quantity                  int     not null default 1 check ( quantity >= 1 ),
-    price                     decimal not null,
-    primary key (order_product_wrapping_id),
-    foreign key (opw_order_product_id) references order_product (order_product_id) on delete cascade,
-    foreign key (opw_wrapping_paper_id) references wrapping_paper (wrapping_paper_id) on delete restrict
-);
-
-# 결제
 create table payment
 (
-    payment_id        bigint         not null auto_increment,
-    p_order_id        char(36)       not null,
-    status            varchar(100)   not null,
-    payment_key       varchar(200)   not null,
-    paid_at           datetime       not null default current_timestamp,
-    amount            decimal(20, 2) not null check ( amount >= 0 ),
-    method            varchar(50)    not null,
-    easy_pay_provider varchar(100)   null,
-    primary key (payment_id),
-    foreign key (p_order_id) references orders (order_id)
+    amount       decimal(38, 2)             not null,
+    approved_at  datetime(6)                null,
+    cancelled_at datetime(6)                null,
+    id           bigint auto_increment
+        primary key,
+    requested_at datetime(6)                not null,
+    payment_key  varchar(200)               not null,
+    order_id     varchar(255)               null,
+    type         enum ('CANCEL', 'CONFIRM') not null,
+    constraint FKlouu98csyullos9k25tbpk4va
+        foreign key (order_id) references orders (id)
 );
 
-create table order_cancel
+create table payment_intent
 (
-    order_cancel_id bigint       not null auto_increment,
-    cancel_reason   varchar(500) not null,
-    canceled_at     datetime     not null default current_timestamp,
-    oc_order_id     char(36)     not null,
-    primary key (order_cancel_id),
-    foreign key (oc_order_id) references orders (order_id)
+    amount     decimal(38, 2)                                                                              null,
+    created_at datetime(6)                                                                                 not null,
+    id         bigint auto_increment
+        primary key,
+    order_id   varchar(255)                                                                                null,
+    status     enum ('CANCELED', 'DONE', 'FAILED', 'PROCESSING', 'READY', 'REQUIRES_PAYMENT', 'SUCCEEDED') null,
+    constraint FKfwfrqj2v4698lvl8iv4h5j6gy
+        foreign key (order_id) references orders (id)
 );
 
+alter table orders
+    add constraint FKt8q67prleh5wivb6q9wx56f8f
+        foreign key (current_pi_id) references payment_intent (id);
 
-create table delivery_fee_policy
+create table payment_transaction
 (
-    delivery_fee_policy_id  bigint         not null auto_increment,
-    name                    varchar(100)   not null unique,
-    default_delivery_fee    decimal(10, 2) not null,
-    free_delivery_threshold decimal(10, 2) not null,
-    primary key (delivery_fee_policy_id)
+    created_at        datetime(6)                                            null,
+    id                bigint auto_increment
+        primary key,
+    payment_intent_id bigint                                                 null,
+    error_code        varchar(255)                                           null,
+    error_message     varchar(255)                                           null,
+    raw_response      varchar(255)                                           null,
+    status            enum ('FAILED', 'PENDING', 'PROGRESSING', 'SUCCEEDED') null,
+    constraint FKdi6u4sooo821wmo7lkjwee7vp
+        foreign key (payment_intent_id) references payment_intent (id)
 );
 
-create table wrapping_paper
+create table product
 (
-    wrapping_paper_id bigint         not null auto_increment,
-    name              varchar(100)   not null,
-    price             decimal(10, 2) not null,
-    stock             bigint         not null check ( stock >= 0 ),
-    createdAt         datetime       not null default current_timestamp,
-    primary key (wrapping_paper_id)
+    price_sales decimal(10, 2)                                    not null,
+    stock       int                                               not null,
+    category_id bigint                                            null,
+    id          bigint auto_increment
+        primary key,
+    view_count  bigint                                            not null,
+    image_url   varchar(255)                                      not null,
+    name        varchar(255)                                      not null,
+    status      enum ('HIDED', 'SELLING', 'SOLD_OUT')             not null,
+    type        enum ('BOOK', 'DVD', 'EBOOK', 'FOREIGN', 'MUSIC') not null,
+    constraint FK1mtsbur82frn64de7balymq9s
+        foreign key (category_id) references category (id)
 );
 
-create table order_return
+create table cart_item
 (
-    order_return_id bigint       not null auto_increment,
-    or_order_id     char(36)     not null,
-    reason          varchar(500) not null,
-    tracking_number varchar(30)  not null unique,
-    requested_at    datetime     not null default current_timestamp,
-    completed_at    datetime     null,
-    primary key (order_return_id),
-    foreign key (or_order_id) references orders (order_id) on delete restrict
+    quantity   int    not null,
+    cart_id    bigint null,
+    id         bigint auto_increment
+        primary key,
+    product_id bigint null,
+    constraint FK1uobyhgl1wvgt1jpccia8xxs3
+        foreign key (cart_id) references cart (id),
+    constraint FKjcyd5wv4igqnw413rgxbfu4nv
+        foreign key (product_id) references product (id)
 );
 
-create table order_product_coupon
+create table order_item
 (
-    order_product_coupon_id bigint         not null auto_increment,
-    opc_order_product_id    bigint         not null,
-    member_coupon_id        bigint         not null,
-    discount                decimal(10, 2) not null,
-    primary key (order_product_coupon_id),
-    foreign key (opc_order_product_id) references order_product (order_product_id)
+    discount_amount decimal(38, 2)                                                                                                                                                       not null,
+    price           decimal(38, 2)                                                                                                                                                       not null,
+    quantity        int                                                                                                                                                                  not null,
+    id              bigint auto_increment
+        primary key,
+    product_id      bigint                                                                                                                                                               null,
+    order_id        varchar(255)                                                                                                                                                         null,
+    status          enum ('DELIVERED', 'DELIVERING', 'ORDER_CANCELLED', 'PAYMENT_COMPLETED', 'PAYMENT_PENDING', 'PURCHASE_CONFIRMED', 'RETURN_COMPLETED', 'RETURN_REQUESTED', 'SHIPPED') not null,
+    delivery_id     bigint                                                                                                                                                               null,
+    constraint UKs01v9uv1ws0vb6sw6y3uc7gj7
+        unique (delivery_id),
+    constraint FK551losx9j75ss5d6bfsqvijna
+        foreign key (product_id) references product (id),
+    constraint FK58egqlvml9lfuihtbxv3ta3vv
+        foreign key (delivery_id) references order_delivery (id),
+    constraint FKt4dc2r9nbvbujrljv3e23iibt
+        foreign key (order_id) references orders (id)
 );
 
-create table order_product_cancel
+alter table delivery
+    add constraint FK6jo80w8x5k5fpsrv0d71qr2ug
+        foreign key (order_item_id) references order_item (id);
+
+create table order_claim
 (
-    order_product_cancel_id bigint       not null auto_increment,
-    reason                  varchar(500) not null,
-    quantity                int          not null default 1 check ( quantity > 0 ),
-    canceled_at             datetime     not null default current_timestamp,
-    opc_order_product_id    bigint       not null,
-    primary key (order_product_cancel_id),
-    foreign key (opc_order_product_id) references order_product (order_product_id)
-
+    cancel_amount          decimal(38, 2)                                                                                                                  null,
+    completed_at           datetime(6)                                                                                                                     null,
+    created_at             datetime(6)                                                                                                                     null,
+    id                     bigint auto_increment
+        primary key,
+    member_id              bigint                                                                                                                          null,
+    order_item_id          bigint                                                                                                                          null,
+    refunded_at            datetime(6)                                                                                                                     null,
+    stock_rolled_back_at   datetime(6)                                                                                                                     null,
+    reason                 varchar(255)                                                                                                                    not null,
+    return_tracking_number varchar(255)                                                                                                                    null,
+    status                 enum ('CANCELED', 'COMPLETED', 'CONFIRMED', 'FAILED', 'IN_PROGRESS', 'REFUNDED', 'REFUND_PROGRESSING', 'REJECTED', 'REQUESTED') not null,
+    type                   enum ('CANCEL', 'RETURNS')                                                                                                      not null,
+    constraint UKjs49yp8ny37p3fpgvm36a4et6
+        unique (order_item_id),
+    constraint FK605nn10x3dg189ufpcx6qx4g3
+        foreign key (member_id) references member (id),
+    constraint FKbhd8m8nh3wv07fobovn4ya6jf
+        foreign key (order_item_id) references order_item (id)
 );
 
-
-create table order_product_return
+create table order_claim_item
 (
-    order_product_return_id bigint       not null auto_increment,
-    opr_order_product_id    bigint       not null,
-    reason                  varchar(500) not null,
-    tracking_number         varchar(30)  not null,
-    quantity                int          not null,
-    requested_at            datetime     not null default current_timestamp,
-    completed_at            datetime     null,
-    primary key (order_product_return_id),
-    foreign key (opr_order_product_id) references order_product (order_product_id) on delete restrict
+    discount_amount decimal(38, 2)                                                                                   not null,
+    quantity        int                                                                                              not null,
+    refund_amount   decimal(38, 2)                                                                                   not null,
+    unit_price      decimal(38, 2)                                                                                   not null,
+    created_at      datetime(6)                                                                                      null,
+    id              bigint auto_increment
+        primary key,
+    order_claim_id  bigint                                                                                           null,
+    order_item_id   bigint                                                                                           null,
+    reason_detail   varchar(500)                                                                                     null,
+    reason          enum ('CHANGE_OF_MIND', 'DEFECTIVE_PRODUCT', 'DELAYED_DELIVERY', 'OTHER', 'WRONG_DELIVERY')      not null,
+    status          enum ('APPROVED', 'COLLECTED', 'COLLECTING', 'COMPLETED', 'INSPECTING', 'REJECTED', 'REQUESTED') not null,
+    constraint FK5ed77fml3mxfs6mi7f5y9hom9
+        foreign key (order_claim_id) references order_claim (id),
+    constraint FKjambpg17txnje98ffh0pussh2
+        foreign key (order_item_id) references order_item (id)
 );
+
+alter table order_delivery
+    add constraint FKl8594bex57xkyp3uqm141crwm
+        foreign key (order_item_id) references order_item (id);
+
+create table publisher
+(
+    id   bigint auto_increment
+        primary key,
+    name varchar(50) not null,
+    constraint UKh9trv4xhmh6s68vbw9ba6to70
+        unique (name)
+);
+
+create table book
+(
+    price_standard decimal(38, 2) not null,
+    publish_date   date           not null,
+    id             bigint         not null
+        primary key,
+    publisher_id   bigint         null,
+    isbn13         varchar(255)   not null,
+    summary        text           not null,
+    title          varchar(255)   not null,
+    constraint UKdjx0bsw5qtlpa3ertiyf8j0bc
+        unique (isbn13),
+    constraint FK8cjf4cjanicu58p2l5t8d9xvu
+        foreign key (id) references product (id),
+    constraint FKgtvt7p649s4x80y6f4842pnfq
+        foreign key (publisher_id) references publisher (id)
+);
+
+create table book_author
+(
+    author_id bigint null,
+    book_id   bigint null,
+    id        bigint auto_increment
+        primary key,
+    constraint FKbjqhp85wjv8vpr0beygh6jsgo
+        foreign key (author_id) references author (id),
+    constraint FKhwgu59n9o80xv75plf9ggj7xn
+        foreign key (book_id) references book (id)
+);
+
+create table review
+(
+    star       int          not null,
+    created_at datetime(6)  not null,
+    id         bigint auto_increment
+        primary key,
+    member_id  bigint       null,
+    content    varchar(255) not null,
+    constraint FKk0ccx5i4ci2wd70vegug074w1
+        foreign key (member_id) references member (id)
+);
+
+create table review_attachment
+(
+    attachment_id bigint null,
+    id            bigint auto_increment
+        primary key,
+    review_id     bigint null,
+    constraint FK54xlvkn2od55vskx76dq2d1b4
+        foreign key (review_id) references review (id),
+    constraint FKe9kp9kcq0drbds18vxt0kvaqf
+        foreign key (attachment_id) references attachment (id)
+);
+

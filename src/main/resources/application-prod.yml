@@ -1,6 +1,12 @@
 server:
   port: 8080
 
+cookie:
+  http-only: true
+  same-site: None
+  secure: true
+  path: /
+
 springdoc:
   swagger-ui:
     path: /docs
@@ -51,7 +57,4 @@ jwt:
 
 gcp:
   gcs:
-    project_id: ${gcp_project_id}
     bucket_name: ${gcs_bucket_name}
-    credentials:
-      location: ${gcs_credentials_location}

@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("/api/v2/books")
+@RequestMapping("/v2/books")
 public class BookController {
     private final BookImportService bookImportService;
     private final BookService bookService;

@@ -27,17 +27,17 @@ public class SecurityConfig {
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)) // 세션 미사용
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
-                        .requestMatchers("/api/auth/login","/api/auth/admin/login", "/api/auth/signup", "/api/auth/reissue", "/api/auth/logout").permitAll() // 로그인, 가입, at 재발급은 허용
-                        .requestMatchers("/api/admin/**").hasRole("ADMIN")
+                        .requestMatchers("/auth/login","/auth/admin/login", "/auth/signup", "/auth/reissue", "/auth/logout").permitAll() // 로그인, 가입, at 재발급은 허용
+                        .requestMatchers("/admin/**").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.GET,
-                                "/api/categories",
-                                "/api/v2/books", "/api/v2/books/{id}",
-                                "/api/reviews/**").permitAll()
+                                "/categories",
+                                "/v2/books", "/v2/books/{id}",
+                                "/reviews/**").permitAll()
                         .requestMatchers(
                                 "/swagger-ui/**",
                                 "/v3/api-docs/**",
                                 "/docs/**",
-                                "/api/v2/books/import"
+                                "/v2/books/import"
                         ).permitAll()// 개발용
                         .anyRequest().authenticated()
                 )

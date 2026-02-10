@@ -23,7 +23,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 @RequiredArgsConstructor
-@RequestMapping("/api/admin/orders")
+@RequestMapping("/admin/orders")
 @RestController
 public class OrderAdminController {
     private final OrderAdminService orderAdminService;
