@@ -28,6 +28,9 @@ jobs:
         with:
           credentials_json: ${{ secrets.GCP_SA_KEY }}
 
+      - name: Docker 인증
+        run: gcloud auth configure-docker asia-northeast3-docker.pkg.dev
+
       - name: Docker Build
         run: |
           docker build -t ${{ secrets.GCP_ARTIFACT_REGISTRY_PATH }}/pbb_api:${{ github.sha }} .
