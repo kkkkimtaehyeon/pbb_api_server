@@ -14,7 +14,7 @@
     <artifactId>shop</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <name>shop-api</name>
-    <description>book</description>
+    <description>pbb</description>
 
     <properties>
         <java.version>21</java.version>
