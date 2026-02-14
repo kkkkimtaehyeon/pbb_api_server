@@ -30,8 +30,8 @@ jobs:
 
       - name: Docker Build
         run: |
-          docker build -t ${{ GCP_ARTIFACT_REGISTRY_PATH }}/pbb_api:${{ github.sha }} .
+          docker build -t ${{ secrets.GCP_ARTIFACT_REGISTRY_PATH }}/pbb_api:${{ github.sha }} .
 
       - name: Docker Push
         run: |
-          docker push ${{ GCP_ARTIFACT_REGISTRY_PATH }}/pbb_api:${{ github.sha }}
+          docker push ${{ secrets.GCP_ARTIFACT_REGISTRY_PATH }}/pbb_api:${{ github.sha }}
