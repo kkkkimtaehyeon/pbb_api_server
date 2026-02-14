@@ -23,7 +23,7 @@ jobs:
             
             echo "Deploying commit: ${{ github.event.workflow_run.head_sha }}"
             
-            docker pull ${{ GCP_ARTIFACT_REGISTRY }}/${{ secrets.GCP_PROJECT_ID }}/repo/pbb_api:${{ github.event.workflow_run.head_sha }}
+            docker pull ${{ GCP_ARTIFACT_REGISTRY_PATH }}/pbb_api:${{ github.event.workflow_run.head_sha }}
             
             docker compose down api
             export IMAGE_TAG=${{ github.event.workflow_run.head_sha }}
