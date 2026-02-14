@@ -15,10 +15,11 @@ public class BookSimpleResponse {
     String publishDate;
     BigDecimal priceStandard;
     BigDecimal priceSales;
-    String productType;
+    String categoryName;
 
     @Builder
-    public BookSimpleResponse(Long id, String imageUrl, String title, String authors, String publisher, String publishDate, BigDecimal priceStandard, BigDecimal priceSales, String productType) {
+    public BookSimpleResponse(Long id, String imageUrl, String title, String authors, String publisher,
+            String publishDate, BigDecimal priceStandard, BigDecimal priceSales, String categoryName) {
         this.id = id;
         this.imageUrl = imageUrl;
         this.title = title;
@@ -27,6 +28,6 @@ public class BookSimpleResponse {
         this.publishDate = publishDate;
         this.priceStandard = priceStandard;
         this.priceSales = priceSales;
-        this.productType = productType;
+        this.categoryName = categoryName;
     }
 }

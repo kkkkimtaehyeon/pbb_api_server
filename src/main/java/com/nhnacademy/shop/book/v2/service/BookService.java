@@ -1,10 +1,12 @@
 package com.nhnacademy.shop.book.v2.service;
 
 import com.nhnacademy.shop.book.v2.dto.BookDetailResponse;
+import com.nhnacademy.shop.book.v2.dto.BookSearchRequest;
 import com.nhnacademy.shop.book.v2.dto.BookSimpleResponse;
 import com.nhnacademy.shop.book.v2.entity.Book;
 import com.nhnacademy.shop.book.v2.entity.BookAuthor;
 import com.nhnacademy.shop.book.v2.repository.BookRepository;
+import com.nhnacademy.shop.product.repository.ProductQueryRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -17,24 +19,26 @@ import java.util.List;
 @Service
 public class BookService {
     private final BookRepository bookRepository;
-
+    private final ProductQueryRepository productQueryRepository;
     @Transactional(readOnly = true)
-    public Page<BookSimpleResponse> getBooks(Pageable pageable) {
-        Page<Book> bookPages = bookRepository.findAll(pageable);
-        return bookPages.map(book ->
-                new BookSimpleResponse(
-                        book.getId(),
-                        book.getImageUrl(),
-                        book.getName(),
-                        getAuthorNames(book),
-                        book.getPublisher().getName(),
-                        book.getPublishDate().toString(),
-                        book.getPriceStandard(),
-                        book.getPriceSales(),
-                        book.getCategory().getName()
+    public Page<BookSimpleResponse> getBooks(Pageable pageable, BookSearchRequest request) {
+        return productQueryRepository.findAllBookProduct(pageable, request);
+//        return
+//        Page<Book> bookPages = bookRepository.findAll(pageable);
+//        return bookPages.map(book ->
+//                new BookSimpleResponse(
+//                        book.getId(),
+//                        book.getImageUrl(),
+//                        book.getName(),
+//                        getAuthorNames(book),
+//                        book.getPublisher().getName(),
+//                        book.getPublishDate().toString(),
+//                        book.getPriceStandard(),
+//                        book.getPriceSales(),
+//                        book.getCategory().getName()
 //                        book.getType().getDisplayName()
-                )
-        );
+//                )
+//        );
     }
 
     @Transactional(readOnly = true)

@@ -1,6 +1,7 @@
 package com.nhnacademy.shop.book.v2.controller;
 
 import com.nhnacademy.shop.book.v2.dto.BookDetailResponse;
+import com.nhnacademy.shop.book.v2.dto.BookSearchRequest;
 import com.nhnacademy.shop.book.v2.dto.BookSimpleResponse;
 import com.nhnacademy.shop.book.v2.service.BookImportService;
 import com.nhnacademy.shop.book.v2.service.BookService;
@@ -18,8 +19,8 @@ public class BookController {
     private final BookService bookService;
 
     @GetMapping
-    public ResponseEntity<Page<BookSimpleResponse>> getBooks(Pageable pageable) {
-        Page<BookSimpleResponse> books = bookService.getBooks(pageable);
+    public ResponseEntity<Page<BookSimpleResponse>> getBooks(Pageable pageable, @ModelAttribute BookSearchRequest request) {
+        Page<BookSimpleResponse> books = bookService.getBooks(pageable, request);
         return ResponseEntity.ok(books);
     }
 

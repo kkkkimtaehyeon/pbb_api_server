@@ -29,4 +29,8 @@ class ProductTypeResponse {
         this.status = type.getStatus();
         this.displayName = type.getDisplayName();
     }
+
+    public static ProductTypeResponse of(ProductType productType) {
+        return new ProductTypeResponse(productType);
+    }
 }
