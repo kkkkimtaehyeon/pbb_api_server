@@ -3,6 +3,7 @@ package com.nhnacademy.shop.auth.service;
 import com.nhnacademy.shop.auth.dto.LoginRequest;
 import com.nhnacademy.shop.auth.dto.TokenDto;
 import com.nhnacademy.shop.common.enums.MemberRole;
+import com.nhnacademy.shop.common.enums.OauthProvider;
 import com.nhnacademy.shop.common.exceptions.LoginFailedException;
 import com.nhnacademy.shop.member.v2.entity.Member;
 import com.nhnacademy.shop.member.v2.repository.MemberRepository;
@@ -92,5 +93,9 @@ public class AuthService {
         );
 
         return newTokenDto;
+    }
+
+    public void oauthLogin(OauthProvider provider, String code) {
+
     }
 }

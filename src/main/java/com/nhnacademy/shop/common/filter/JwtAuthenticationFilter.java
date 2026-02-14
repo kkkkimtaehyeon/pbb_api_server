@@ -1,12 +1,16 @@
 package com.nhnacademy.shop.common.filter;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nhnacademy.shop.auth.service.JwtProvider;
+import com.nhnacademy.shop.common.properties.AppProperties;
+import com.nhnacademy.shop.common.response.ApiResponse;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
@@ -14,10 +18,13 @@ import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
 
+@Slf4j
 @RequiredArgsConstructor
 @Component
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private final JwtProvider jwtProvider;
+    private final ObjectMapper objectMapper;
+    private final AppProperties appProperties;
 
     @Override
     protected boolean shouldNotFilter(HttpServletRequest request) {
@@ -46,7 +53,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 return;
             }
         }
-
         filterChain.doFilter(request, response);
     }
 
@@ -66,6 +72,13 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         response.setStatus(status);
         response.setContentType("application/json");
         response.setCharacterEncoding("UTF-8");
-        response.getWriter().write(String.format("{\"error\": \"%s\"}", message));
+        // CORS 헤더 추가 (생략)
+        response.setHeader("Access-Control-Allow-Origin", appProperties.getFrontDomain()); // 프론트엔드 주소
+        response.setHeader("Access-Control-Allow-Credentials", "true");
+        response.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
+        response.setHeader("Access-Control-Allow-Headers", "*");
+
+        ApiResponse<Object> errorResponse = ApiResponse.fail(null, String.valueOf(status), message);
+        response.getWriter().write(objectMapper.writeValueAsString(errorResponse));
     }
 }

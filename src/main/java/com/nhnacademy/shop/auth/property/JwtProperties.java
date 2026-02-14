@@ -13,6 +13,7 @@ public class JwtProperties {
     @Value("${jwt.secret}")
     private String secret;
 
+//    public static final long ACCESS_TOKEN_EXPIRE_TIME = 1000 * 30; // 30초
     public static final long ACCESS_TOKEN_EXPIRE_TIME = 1000 * 60 * 30; // 30분
     public static final long REFRESH_TOKEN_EXPIRE_TIME = 1000 * 60 * 60 * 24 * 7; // 7일
 

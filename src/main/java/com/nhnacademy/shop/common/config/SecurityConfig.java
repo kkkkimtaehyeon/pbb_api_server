@@ -1,6 +1,5 @@
 package com.nhnacademy.shop.common.config;
 
-import com.nhnacademy.shop.common.enums.MemberRole;
 import com.nhnacademy.shop.common.filter.JwtAuthenticationFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -27,7 +26,8 @@ public class SecurityConfig {
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)) // 세션 미사용
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
-                        .requestMatchers("/auth/login","/auth/admin/login", "/auth/signup", "/auth/reissue", "/auth/logout").permitAll() // 로그인, 가입, at 재발급은 허용
+                        .requestMatchers("/error").permitAll()
+                        .requestMatchers("/auth/login", "/oauth/login/**", "/auth/admin/login", "/auth/signup", "/auth/reissue", "/auth/logout").permitAll() // 로그인, 가입, at 재발급은 허용
                         .requestMatchers("/admin/**").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.GET,
                                 "/categories",
