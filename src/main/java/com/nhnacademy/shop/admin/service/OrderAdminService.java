@@ -19,7 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
-@PreAuthorize(value = "{hasRole('ADMIN')}")
+@PreAuthorize(value = "hasRole('ADMIN')")
 @RequiredArgsConstructor
 @Service
 public class OrderAdminService {
@@ -28,7 +28,7 @@ public class OrderAdminService {
     private final OrderClaimQueryRepository orderClaimQueryRepository;
 
 
-    @Transactional
+    @Transactional(readOnly = true)
     public Page<OrderSimpleResponse> getAllOrders(Pageable pageable, OrderStatus status) {
         Page<Order> orders = null;
         if (status == null) {
@@ -47,10 +47,11 @@ public class OrderAdminService {
         });
     }
 
-    private String getProductSummary(List<OrderItem> orderItems) {
+    @Transactional(readOnly = true)
+    public String getProductSummary(List<OrderItem> orderItems) {
         int size = orderItems.size();
         String firstProductName = orderItems.getFirst().getProduct().getName();
-        if (size > 1) {
+        if (size == 1) {
             return firstProductName;
         }
         return String.format("%s외 %d건", firstProductName, size - 1);

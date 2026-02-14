@@ -1,25 +1,24 @@
 package com.nhnacademy.shop.admin.controller;
 
-import com.nhnacademy.shop.admin.dto.AdminDashboardResponse;
+import com.nhnacademy.shop.admin.dto.DashboardHomeResponse;
 import com.nhnacademy.shop.admin.service.AdminService;
-import com.nhnacademy.shop.delivery.dto.DeliveryRegistrationRequest;
-import com.nhnacademy.shop.delivery.service.DeliveryService;
-import jakarta.validation.Valid;
+import com.nhnacademy.shop.common.response.ApiResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 @RequiredArgsConstructor
 @RequestMapping("/admin")
 @RestController
 public class AdminController {
     private final AdminService adminService;
-    private final DeliveryService deliveryService;
 
     @GetMapping("/dashboard")
-    public ResponseEntity<AdminDashboardResponse> dashboard() {
-        AdminDashboardResponse dashboard = adminService.getDashboard();
-        return ResponseEntity.ok(dashboard);
+    public ResponseEntity<ApiResponse<DashboardHomeResponse>> dashboard() {
+        DashboardHomeResponse dashboard = adminService.getDashboard();
+        return ResponseEntity.ok(ApiResponse.success(dashboard));
     }
 
 
