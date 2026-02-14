@@ -31,27 +31,23 @@ public class Payment {
     private LocalDateTime requestedAt;
 
     @Column
-    private LocalDateTime approvedAt;
-
-    @Column
-    private LocalDateTime cancelledAt;
+    private LocalDateTime completedAt;
 
     @Column(nullable = false)
     private BigDecimal amount;
 
     @Setter
     @ManyToOne
-    @JoinColumn(name = "order_id", referencedColumnName = "id")
+    @JoinColumn(name = "order_id", referencedColumnName = "id", nullable = false)
     private Order order;
 
     @Builder
-    public Payment(Long id, PaymentType type, String paymentKey, LocalDateTime requestedAt, LocalDateTime approvedAt, LocalDateTime cancelledAt, BigDecimal amount, Order order) {
+    public Payment(Long id, PaymentType type, String paymentKey, LocalDateTime requestedAt, LocalDateTime completedAt, BigDecimal amount, Order order) {
         this.id = id;
         this.type = type;
         this.paymentKey = paymentKey;
         this.requestedAt = requestedAt;
-        this.approvedAt = approvedAt;
-        this.cancelledAt = cancelledAt;
+        this.completedAt = completedAt;
         this.amount = amount;
         this.order = order;
     }

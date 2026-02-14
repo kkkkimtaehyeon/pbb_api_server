@@ -28,7 +28,7 @@ public class OrderRefundService {
         String orderId = orderClaim.getOrderItem().getOrder().getId();
         Payment payment = paymentRepository.findByOrderId(orderId)
                 .orElseThrow();
-        paymentService.cancel(new PaymentCancelCommand(payment.getPaymentKey(), orderClaim.getCancelAmount(), orderClaim.getReason()));
+        paymentService.cancel(new PaymentCancelCommand(orderId, payment.getPaymentKey(), orderClaim.getCancelAmount(), orderClaim.getReason()));
         // orderClaim 환불 완료 처리
         orderClaim.refunded();
     }

@@ -47,7 +47,7 @@ public class PaymentService {
                 .paymentKey(request.getPaymentKey())
                 .type(PaymentType.CONFIRM)
                 .requestedAt(request.getRequestedAt())
-                .approvedAt(request.getApprovedAt())
+                .completedAt(request.getApprovedAt())
                 .amount(request.getAmount())
                 .order(order)
                 .build();
@@ -90,19 +90,20 @@ public class PaymentService {
     }
 
     public void cancel(PaymentCancelCommand command) {
-//        Payment payment = paymentRepository.findByPaymentKey(command.getPaymentKey())
-//                .orElseThrow(() -> new IllegalArgumentException("결제정보가 존재하지 않습니다."));
-//        String paymentKey = payment.getPaymentKey();
+        Order order = orderRepository.findById(command.getOrderId())
+                .orElseThrow();
+        String paymentKey = order.getPayments().getFirst().getPaymentKey();
         // pg사 결제취소 요청
-        PaymentCancelResponse response = pgService.cancelPayment(command.getPaymentKey(), command.getCancelReason(), command.getCancelAmount());
+        PaymentCancelResponse response = pgService.cancelPayment(paymentKey, command.getCancelReason(), command.getCancelAmount());
 
         // 결제취소 정보 저장
         Payment cancelPayment = Payment.builder()
                 .type(PaymentType.CANCEL)
                 .requestedAt(response.getRequestedAt())
-                .cancelledAt(response.getCanceledAt())
+                .completedAt(response.getCanceledAt())
                 .amount(response.getCancelAmount())
                 .paymentKey(response.getPaymentKey())
+                .order(order)
                 .build();
         paymentRepository.save(cancelPayment);
     }

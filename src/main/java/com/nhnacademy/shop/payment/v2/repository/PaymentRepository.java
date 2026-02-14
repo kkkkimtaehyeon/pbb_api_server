@@ -12,8 +12,8 @@ import java.util.Optional;
 public interface PaymentRepository extends JpaRepository<Payment, Long> {
     @Query("SELECT p " +
             "FROM Payment p " +
-            "WHERE p.order.id = :orderId AND p.type = 'CONFIRM' AND p.approvedAt IS NOT NULL " +
-            "ORDER BY p.approvedAt ASC " +
+            "WHERE p.order.id = :orderId AND p.type = 'CONFIRM' AND p.completedAt IS NOT NULL " +
+            "ORDER BY p.completedAt ASC " +
             "LIMIT 1")
     Optional<Payment> findByOrderId(@Param("orderId") String orderId);
 
