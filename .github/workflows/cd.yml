@@ -20,9 +20,11 @@ jobs:
           key: ${{ secrets.GCE_SSH_KEY }}
           script: |
             cd /pbb
-#            gcloud auth configure-docker asia-northeast3-docker.pkg.dev -q
             
-            docker pull asia-northeast3-docker.pkg.dev/plzbuybook-487004/repo/pbb_api:${{ github.sha }}
+            echo "Deploying commit: ${{ github.event.workflow_run.head_sha }}"
+            
+            docker pull ${{ GCP_ARTIFACT_REGISTRY }}/${{ secrets.GCP_PROJECT_ID }}/repo/pbb_api:${{ github.event.workflow_run.head_sha }}
             
             docker compose down api
+            export IMAGE_TAG=${{ github.event.workflow_run.head_sha }}
             docker compose up -d api
