@@ -44,6 +44,7 @@ public class DeliveryAddressService {
                 .zipcode(request.getZipcode())
                 .address(request.getAddress())
                 .addressDetail(request.getAddressDetail())
+                .isDefault(Boolean.TRUE.equals(request.getIsDefault()))
                 .member(member)
                 .build();
 
@@ -52,7 +53,7 @@ public class DeliveryAddressService {
 
     @Transactional
     public DeliveryAddressResponse updateDeliveryAddress(Long memberId, Long deliveryAddressId,
-                                                         DeliveryAddressRequest request) {
+            DeliveryAddressRequest request) {
 
         DeliveryAddress deliveryAddress = deliveryAddressRepository.findByIdAndMember_Id(deliveryAddressId, memberId)
                 .orElseThrow(() -> new IllegalArgumentException("배송지 정보가 존재하지 않습니다."));
