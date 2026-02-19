@@ -1,14 +1,20 @@
 # TODO
 - [ ] 관리자 기능 역할 기반 접근 제어 (RBAC)
-- [ ] Book 생성 시 type을 강제 고정
+- [x] Book 생성 시 type을 강제 고정
 - [ ] OrderItemStatusHistory 엔티티 추가 (반품조건, CS 등 이유)
-- [ ] 반품기능 구현
+- [x] 반품기능 구현
+- [x] 주문취소기능 구현
 - [ ] Spring 상태머신 도입
+- [x] payco oauth 로그인 구현
+- [ ] 무신사처럼 여러 판매자가 상품을 판매할 수 있는 구조 구축
+- [ ] 관리자, CS 운영자 권한을 나누고 RBAC 기반 관리자 기능 구현
+- [ ] payment approvedAt, cancelledAt 통합, type과 compeletedAt으로 구분
 
 # Problem
 - [x] 결제하면 데드락 발생
 - [ ] Spring Security 때문에 모든 에러가 403
 - [ ] @TransactionalEventListener(phase = AFTER_COMMIT)으로 호출하는 메서드의 @Transactional 동작안함
+- [ ] JwtAuthFilter의 sendErrorResponse가 cors 에러 발생해서 토큰 재발급 로직 작동안함. -> filter는 security 안 거쳐서 cors 설정 무시?
 
 # Solved
 - 결제하면 데드락 발생

@@ -1,10 +1,12 @@
 package com.nhnacademy.shop.order.v2.controller;
 
+import com.nhnacademy.shop.common.response.ApiResponse;
 import com.nhnacademy.shop.common.security.MemberDetail;
 import com.nhnacademy.shop.order.v2.dto.OrderCreationRequest;
 import com.nhnacademy.shop.order.v2.dto.OrderCreationResponse;
 import com.nhnacademy.shop.order.v2.dto.OrderDetailResponse;
 import com.nhnacademy.shop.order.v2.dto.OrderListResponse;
+import com.nhnacademy.shop.order.v2.service.OrderFacade;
 import com.nhnacademy.shop.order.v2.service.OrderService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -19,12 +21,22 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 public class OrderController {
     private final OrderService orderService;
+    private final OrderFacade orderFacade;
+
+//    @PostMapping
+//    public ResponseEntity<OrderCreationResponse> createPendingOrder(@AuthenticationPrincipal MemberDetail memberDetail,
+//            @Valid @RequestBody OrderCreationRequest request) {
+//        Long memberId = memberDetail.getMemberId();
+//        OrderCreationResponse response = orderService.createPendingOrder(memberId, request);
+//        return ResponseEntity.ok(response);
+//    }
 
     @PostMapping
-    public ResponseEntity<OrderCreationResponse> createPendingOrder(@Valid @RequestBody OrderCreationRequest request) {
-        Long memberId = 1L;
-        OrderCreationResponse response = orderService.createPendingOrder(memberId, request);
-        return ResponseEntity.ok(response);
+    public ResponseEntity<ApiResponse<OrderCreationResponse>> createPendingOrder(@AuthenticationPrincipal MemberDetail memberDetail,
+                                                                                @Valid @RequestBody OrderCreationRequest request) {
+        Long memberId = memberDetail.getMemberId();
+        OrderCreationResponse response = orderFacade.createOrder(memberId, request);
+        return ResponseEntity.ok(ApiResponse.success(response));
     }
 
     @GetMapping
@@ -49,6 +61,5 @@ public class OrderController {
         orderService.confirmPurchase(memberId, orderId, orderItemId);
         return ResponseEntity.ok().build();
     }
-
 
 }

@@ -1,15 +1,12 @@
 package com.nhnacademy.shop.payment.v2.service;
 
-
 import com.nhnacademy.shop.common.enums.OrderItemStatus;
 import com.nhnacademy.shop.common.enums.PaymentIntentStatus;
 import com.nhnacademy.shop.common.exceptions.PaymentFailException;
 import com.nhnacademy.shop.common.exceptions.PgClientException;
 import com.nhnacademy.shop.common.exceptions.PgException;
 import com.nhnacademy.shop.common.exceptions.PgServerException;
-import com.nhnacademy.shop.order.v2.dto.OrderCreationRequest;
-import com.nhnacademy.shop.order.v2.dto.OrderCreationResponse;
-import com.nhnacademy.shop.order.v2.service.OrderFacade;
+
 import com.nhnacademy.shop.order.v2.service.OrderService;
 import com.nhnacademy.shop.payment.v2.dto.*;
 import lombok.RequiredArgsConstructor;
@@ -22,12 +19,9 @@ public class PaymentFacade {
     private final PaymentIntentService paymentIntentService;
     private final PgService pgService;
     private final OrderService orderService;
-    private final OrderFacade orderFacade;
 
-    public PaymentIntentResponse createOrderAndPaymentIntent(Long memberId, OrderCreationRequest request) {
-        OrderCreationResponse orderCreationResponse = orderFacade.createOrder(memberId, request);
-        PaymentRequest paymentRequest = new PaymentRequest(orderCreationResponse.orderId(), orderCreationResponse.paymentAmount());
-        return paymentService.processPaymentIntent(memberId, paymentRequest);
+    public PaymentIntentResponse createPaymentIntent(Long memberId, PaymentRequest request) {
+        return paymentService.processPaymentIntent(memberId, request);
     }
 
     public PaymentConfirmResponse confirmPayment(PaymentConfirmRequest request) {
@@ -38,7 +32,7 @@ public class PaymentFacade {
         try {
             response = pgService.confirmPayment(request, paymentIntentId);
             // payment 정보 저장
-//            paymentService.completePaymentConfirm(response, paymentIntentId);
+            // paymentService.completePaymentConfirm(response, paymentIntentId);
             completePaymentConfirm(response, paymentIntentId);
         } catch (PgException pgException) {
             handlePgException(paymentIntentId, pgException);

@@ -69,7 +69,7 @@ public class MemberService {
     public MemberDetailResponse getMemberById(Long memberId) {
         Member member = validateMember(memberId);
         return MemberDetailResponse.builder()
-                .id(memberId)
+//                .id(memberId)
                 .email(member.getEmail())
                 .name(member.getName())
                 .grade(member.getMemberGrade().getDisplayName())

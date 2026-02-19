@@ -1,8 +1,8 @@
 package com.nhnacademy.shop.payment.v2.controller;
 
-
+import com.nhnacademy.shop.common.response.ApiResponse;
 import com.nhnacademy.shop.common.security.MemberDetail;
-import com.nhnacademy.shop.order.v2.dto.OrderCreationRequest;
+
 import com.nhnacademy.shop.payment.v2.dto.PaymentConfirmRequest;
 import com.nhnacademy.shop.payment.v2.dto.PaymentConfirmResponse;
 import com.nhnacademy.shop.payment.v2.dto.PaymentIntentResponse;
@@ -22,18 +22,20 @@ import org.springframework.web.bind.annotation.RestController;
 public class PaymentController {
     private final PaymentFacade paymentFacade;
 
-//    @PostMapping
-//    public ResponseEntity<PaymentIntentResponse> payment(@Valid @RequestBody PaymentRequest request) {
-//        PaymentIntentResponse response = paymentService.processPaymentIntent(memberId, request);
-//        return ResponseEntity.ok(response);
-//    }
+    // @PostMapping
+    // public ResponseEntity<PaymentIntentResponse> payment(@Valid @RequestBody
+    // PaymentRequest request) {
+    // PaymentIntentResponse response =
+    // paymentService.processPaymentIntent(memberId, request);
+    // return ResponseEntity.ok(response);
+    // }
 
     @PostMapping
-    public ResponseEntity<PaymentIntentResponse> payment(@AuthenticationPrincipal MemberDetail memberDetail,
-                                                         @Valid @RequestBody OrderCreationRequest request) {
+    public ResponseEntity<ApiResponse<PaymentIntentResponse>> payment(@AuthenticationPrincipal MemberDetail memberDetail,
+                                                                     @Valid @RequestBody com.nhnacademy.shop.payment.v2.dto.PaymentRequest request) {
         Long memberId = memberDetail.getMemberId();
-        PaymentIntentResponse response = paymentFacade.createOrderAndPaymentIntent(memberId, request);
-        return ResponseEntity.ok(response);
+        PaymentIntentResponse response = paymentFacade.createPaymentIntent(memberId, request);
+        return ResponseEntity.ok(ApiResponse.success(response));
     }
 
     @PostMapping("/confirm")
