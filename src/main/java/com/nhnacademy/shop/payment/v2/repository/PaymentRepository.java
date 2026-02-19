@@ -10,12 +10,15 @@ import java.util.Optional;
 
 @Repository
 public interface PaymentRepository extends JpaRepository<Payment, Long> {
-    @Query("SELECT p " +
-            "FROM Payment p " +
-            "WHERE p.order.id = :orderId AND p.type = 'CONFIRM' AND p.completedAt IS NOT NULL " +
-            "ORDER BY p.completedAt ASC " +
-            "LIMIT 1")
-    Optional<Payment> findByOrderId(@Param("orderId") String orderId);
+    Optional<Payment> findFirstByOrder_IdAndTypeAndCompletedAtIsNotNullOrderByCompletedAtAsc(String orderId,
+            com.nhnacademy.shop.common.enums.PaymentType type);
+
+    default Optional<Payment> findByOrderId(String orderId) {
+        return findFirstByOrder_IdAndTypeAndCompletedAtIsNotNullOrderByCompletedAtAsc(orderId,
+                com.nhnacademy.shop.common.enums.PaymentType.CONFIRM);
+    }
+
+    java.util.List<Payment> findAllByOrder_Id(String orderId);
 
     Optional<Payment> findByPaymentKey(String orderId);
 
