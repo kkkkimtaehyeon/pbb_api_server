@@ -29,6 +29,9 @@ public class Order {
     @Column(nullable = false)
     private LocalDateTime orderedAt;
 
+    @Column
+    private String strategyType;
+
     @Setter
     @Column
     private int usedPoint;
@@ -52,25 +55,25 @@ public class Order {
     @Column(nullable = false)
     private String addressDetail;
 
-    //    @BatchSize(size = 100)
+    // @BatchSize(size = 100)
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "order", cascade = CascadeType.ALL)
     private List<OrderItem> orderItems;
-
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id", referencedColumnName = "id")
     private Member member;
 
-    @OneToOne(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @OneToOne(fetch = FetchType.LAZY, cascade = { CascadeType.PERSIST, CascadeType.MERGE })
     @JoinColumn(name = "current_pi_id", referencedColumnName = "id")
     private PaymentIntent currentPaymentIntent;
 
     @OneToMany(mappedBy = "order", fetch = FetchType.LAZY)
     private List<Payment> payments;
 
-
     @Builder
-    public Order(String id, LocalDateTime orderedAt, int usedPoint, BigDecimal paymentAmount, String receiver, String phoneNumber, String zipcode, String address, String addressDetail, List<OrderItem> orderItems, Member member, PaymentIntent currentPaymentIntent) {
+    public Order(String id, LocalDateTime orderedAt, int usedPoint, BigDecimal paymentAmount, String receiver,
+            String phoneNumber, String zipcode, String address, String addressDetail, List<OrderItem> orderItems,
+            Member member, PaymentIntent currentPaymentIntent, String strategyType) {
         this.id = id;
         this.orderedAt = orderedAt;
         this.usedPoint = usedPoint;
@@ -83,10 +86,11 @@ public class Order {
         this.orderItems = orderItems;
         this.member = member;
         this.currentPaymentIntent = currentPaymentIntent;
+        this.strategyType = strategyType;
     }
 
-
-    public static Order createPendingOrder(Member member, DeliveryAddress deliveryAddress, List<OrderItem> orderItems) {
+    public static Order createPendingOrder(Member member, DeliveryAddress deliveryAddress, List<OrderItem> orderItems,
+            String strategyType) {
         Order order = Order.builder()
                 .receiver(deliveryAddress.getReceiver())
                 .phoneNumber(deliveryAddress.getPhoneNumber())
@@ -95,6 +99,7 @@ public class Order {
                 .addressDetail(deliveryAddress.getAddressDetail())
                 .usedPoint(0)
                 .member(member)
+                .strategyType(strategyType)
                 .build();
         for (OrderItem orderItem : orderItems) {
             order.addItem(orderItem);

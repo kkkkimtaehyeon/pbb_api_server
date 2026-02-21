@@ -9,6 +9,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.SuperBuilder;
+import jakarta.persistence.Version;
 
 import java.math.BigDecimal;
 
@@ -35,6 +36,10 @@ public abstract class Product {
 
     @Column(nullable = false)
     private String imageUrl;
+
+    @Version
+    @Column(nullable = false)
+    private long version;
 
     @Setter
     @Column(nullable = false)
@@ -64,5 +69,12 @@ public abstract class Product {
     public void addStock(int stock) {
         this.stock += stock;
     }
-}
 
+    public void deductStock(int quantity) {
+        if (this.stock < quantity) {
+            throw new IllegalStateException(
+                    String.format("재고가 부족합니다. 상품 ID: %d, 현재 재고: %d, 요청 수량: %d", id, this.stock, quantity));
+        }
+        this.stock -= quantity;
+    }
+}

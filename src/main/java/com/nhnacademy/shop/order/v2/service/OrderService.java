@@ -63,6 +63,12 @@ public class OrderService {
 
         @Transactional
         public OrderCreationResponse createPendingOrder(Long memberId, OrderCreationRequest request) {
+                return createPendingOrderWithStrategy(memberId, request, "DB_SIMPLE");
+        }
+
+        @Transactional
+        public OrderCreationResponse createPendingOrderWithStrategy(Long memberId, OrderCreationRequest request,
+                        String strategyType) {
                 Member member = memberRepository.findById(memberId)
                                 .orElseThrow(() -> new IllegalArgumentException("회원정보가 존재하지 않습니다."));
                 DeliveryAddress deliveryAddress = deliveryAddressRepository.findById(request.getDeliveryAddressId())
@@ -79,7 +85,7 @@ public class OrderService {
                                                         item.quantity());
                                 }).toList();
                 // order 저장
-                Order order = Order.createPendingOrder(member, deliveryAddress, orderItems);
+                Order order = Order.createPendingOrder(member, deliveryAddress, orderItems, strategyType);
                 orderRepository.save(order);
                 return new OrderCreationResponse(order.getId(), order.getPaymentAmount());
         }
