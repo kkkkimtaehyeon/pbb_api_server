@@ -4,6 +4,7 @@ import com.nhnacademy.shop.deliveryAddress.service.DeliveryAddressService;
 import com.nhnacademy.shop.member.v2.service.MemberService;
 import com.nhnacademy.shop.order.v2.dto.OrderCreationRequest;
 import com.nhnacademy.shop.product.service.ProductService;
+import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -14,6 +15,7 @@ public class OrderValidator {
     private final MemberService memberService;
     private final DeliveryAddressService deliveryAddressService;
     private final ProductService productService;
+    private final EntityManager em;
 
     @Transactional(readOnly = true)
     public void validateCreateOrder(Long memberId, OrderCreationRequest request) {
@@ -23,6 +25,7 @@ public class OrderValidator {
         deliveryAddressService.validateDeliveryAddress(memberId, request.getDeliveryAddressId());
         // 상품 검증
         productService.validateOrderableProducts(request.getItems());
+        em.clear();
     }
 
 

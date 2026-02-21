@@ -37,9 +37,9 @@ public abstract class Product {
     @Column(nullable = false)
     private String imageUrl;
 
-    @Version
-    @Column(nullable = false)
-    private long version;
+//    @Version
+//    @Column(nullable = false)
+//    private long version;
 
     @Setter
     @Column(nullable = false)

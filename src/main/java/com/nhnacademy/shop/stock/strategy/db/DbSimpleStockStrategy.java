@@ -10,6 +10,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Comparator;
 
 /**
  * DB 기반 단순 재고차감 전략.
@@ -25,11 +26,17 @@ public class DbSimpleStockStrategy implements StockDeductionStrategy {
     @Override
     @Transactional
     public void deduct(List<OrderItemCreationRequest> items) {
-        for (OrderItemCreationRequest item : items) {
+        // 데드락 방지: 항상 ID 오름차순으로 처리
+        List<OrderItemCreationRequest> sortedItems = items.stream()
+                .sorted(Comparator.comparingLong(OrderItemCreationRequest::productId))
+                .toList();
+
+        for (OrderItemCreationRequest item : sortedItems) {
             Product product = productRepository.findById(item.productId())
                     .orElseThrow(() -> new IllegalArgumentException("상품정보가 존재하지 않습니다. id=" + item.productId()));
             product.deductStock(item.quantity());
         }
+        productRepository.flush();
     }
 
     @Override

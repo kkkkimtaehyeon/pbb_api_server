@@ -9,6 +9,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 /**
@@ -26,19 +28,12 @@ public class DbPessimisticStockStrategy implements StockDeductionStrategy {
     @Override
     @Transactional
     public void deduct(List<OrderItemCreationRequest> items) {
-        // 데드락 방지: 항상 ID 오름차순으로 락 획득
-        List<Long> productIds = items.stream()
-                .map(OrderItemCreationRequest::productId)
-                .sorted()
+        List<OrderItemCreationRequest> sortedItems = items.stream()
+                .sorted(Comparator.comparingLong(OrderItemCreationRequest::productId))
                 .toList();
-
-        List<Product> products = productRepository.findAllByIdWithPessimisticLock(productIds);
-
-        for (OrderItemCreationRequest item : items) {
-            Product product = products.stream()
-                    .filter(p -> p.getId().equals(item.productId()))
-                    .findFirst()
-                    .orElseThrow(() -> new IllegalArgumentException("상품정보가 존재하지 않습니다. id=" + item.productId()));
+        for (OrderItemCreationRequest item : sortedItems) {
+            Product product = productRepository.findByIdWithPessimisticLock(item.productId())
+                    .orElseThrow(() -> new IllegalArgumentException("상품정보가 존재하지 않습니다."));
             product.deductStock(item.quantity());
         }
     }

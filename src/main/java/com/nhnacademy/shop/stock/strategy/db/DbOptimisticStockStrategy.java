@@ -29,7 +29,10 @@ public class DbOptimisticStockStrategy implements StockDeductionStrategy {
     @Transactional
     @Retryable(retryFor = OptimisticLockingFailureException.class, maxAttempts = 3, backoff = @Backoff(delay = 100, multiplier = 2))
     public void deduct(List<OrderItemCreationRequest> items) {
-        List<Long> productIds = items.stream().map(OrderItemCreationRequest::productId).toList();
+        List<Long> productIds = items.stream()
+                .map(OrderItemCreationRequest::productId)
+                .sorted()
+                .toList();
         List<Product> products = productRepository.findAllByIdWithOptimisticLock(productIds);
 
         for (OrderItemCreationRequest item : items) {
@@ -39,6 +42,7 @@ public class DbOptimisticStockStrategy implements StockDeductionStrategy {
                     .orElseThrow(() -> new IllegalArgumentException("상품정보가 존재하지 않습니다. id=" + item.productId()));
             product.deductStock(item.quantity());
         }
+        productRepository.flush();
     }
 
     @Override

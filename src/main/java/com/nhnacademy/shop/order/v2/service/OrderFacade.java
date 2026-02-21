@@ -32,14 +32,15 @@ public class OrderFacade {
     @Transactional
     public OrderCreationResponse createOrderWithStrategy(Long memberId, OrderCreationRequest request,
             String strategyType) {
+        // 상품 검증
         orderValidator.validateCreateOrder(memberId, request);
 
-        // 1. 주문 생성 (DB 저장, strategyType 기록)
-        OrderCreationResponse response = orderService.createPendingOrderWithStrategy(memberId, request, strategyType);
-
-        // 2. 재고 선점 (전략 선택)
+        // 1. 재고 선점 (전략 선택) - 데드락 방지를 위해 주문 생성보다 먼저 선점
         StockDeductionStrategy strategy = resolveStrategy(strategyType);
         strategy.deduct(request.getItems());
+
+        // 2. 주문 생성 (DB 저장, strategyType 기록)
+        OrderCreationResponse response = orderService.createPendingOrderWithStrategy(memberId, request, strategyType);
 
         return response;
     }
