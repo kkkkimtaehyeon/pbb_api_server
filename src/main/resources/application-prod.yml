@@ -13,6 +13,10 @@ springdoc:
 
 spring:
 
+  flyway:
+    enabled: true
+    baseline-on-migrate: true
+
   servlet:
     multipart:
       enabled: true
